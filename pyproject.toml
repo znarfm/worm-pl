@@ -1,0 +1,10 @@
+[project]
+name = "worm-pl"
+version = "0.1.0"
+description = "Mini programming language for PPL course"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "streamlit>=1.41.1",
+    "streamlit-code-editor>=0.1.22",
+]
