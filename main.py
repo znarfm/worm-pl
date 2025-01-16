@@ -2,6 +2,8 @@ import streamlit as st
 from code_editor import code_editor
 import pandas as pd
 
+from lexer import Lexer, Token
+
 # Page config
 st.set_page_config(page_title="Worm Code Tokenizer", page_icon="🪱", layout="wide")
 
@@ -56,37 +58,40 @@ with left_col:
 
     # Tokenize handler
     if response_dict.get("text", not None):
-        st.write(response_dict)
-        # Simple tokenization (you can enhance this based on your needs)
-        tokens = response_dict.get("text").split()
-
-        # Create a dataframe with tokens
+        code_input = response_dict.get("text")
+        
+        # Create lexer instance and tokenize
+        lexer = Lexer(code_input, include_comments=True)
+        tokens = lexer.tokenize()
+        
+        # Convert tokens to DataFrame
         df = pd.DataFrame(
-            {
-                "Token": tokens,
-                "Type": [
-                    "keyword"
-                    if token
-                    in [
-                        "def",
-                        "class",
-                        "import",
-                        "for",
-                        "while",
-                        "if",
-                        "else",
-                        "return",
-                    ]
-                    else "identifier"
-                    for token in tokens
-                ],
-            }
+            [{
+                "Type": token.type,
+                "Value": token.value,
+                "Line": token.line,
+                "Indent": token.indent_level
+            } for token in tokens]
         )
 
         # Display results in right column
         with right_col:
             st.subheader("Tokenization Results")
-            st.dataframe(df)
+            if not df.empty:
+                st.dataframe(
+                    df,
+                    column_config={
+                        "Type": st.column_config.TextColumn("Token Type", width="medium"),
+                        "Value": st.column_config.TextColumn("Value", width="medium"),
+                        "Line": st.column_config.NumberColumn("Line #"),
+                        "Indent": st.column_config.NumberColumn("Indent Level")
+                    },
+                    hide_index=True,
+                    use_container_width=True,
+                )
+            else:
+                st.info("No tokens found in the input code.")
+
     else:
         with right_col:
             st.subheader("Tokenization Results")
