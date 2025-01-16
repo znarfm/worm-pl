@@ -17,7 +17,6 @@ This project uses `pyproject.toml` for dependency management. You can use any of
 - **uv** (Recommended):
 
   ```bash
-  uv venv
   uv sync
   ```
 
