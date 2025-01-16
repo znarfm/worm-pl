@@ -22,7 +22,7 @@ class Lexer:
         self.include_comments = include_comments
         self.patterns = {
             # Whitespace
-            "NEWLINE": r"\n+",
+            "NEWLINE": r"\r\n|\n|\r",
             "INDENT": r"^[ \t]+",
 
             # Comments - updated patterns
@@ -136,7 +136,7 @@ class Lexer:
             
             # Handle different token types
             if kind == 'NEWLINE':
-                tokens.append(Token(kind, '\\n', line_num, current_indent))
+                tokens.append(Token(kind, r'\n', line_num, current_indent))
                 line_num += 1
                 current_indent = 0
             elif kind == 'MULTI_LINE_COMMENT':
@@ -154,6 +154,7 @@ class Lexer:
                 if kind != 'SINGLE_LINE_COMMENT' or self.include_comments:  # Optional comment inclusion
                     tokens.append(Token(kind, value, line_num, current_indent))
                 if kind == 'SINGLE_LINE_COMMENT':
+                    tokens.append(Token('NEWLINE', r'\n', line_num, current_indent))
                     line_num += 1
         self.tokens = tokens
         return tokens
@@ -193,8 +194,10 @@ test_code = '''def main():
     comment that spans
     several lines
     """
-    x = 42
-    print('Hello,\\nWorld!')  # with newline'''
+    x = 42  # Assigning a number
+    if x > 0:
+        print("Positive")
+    print("Done")'''
 
 lexer = Lexer(test_code, include_comments=True)
 print("Input:")
