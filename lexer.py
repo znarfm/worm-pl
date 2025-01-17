@@ -140,7 +140,7 @@ class Lexer:
             # Detect empty or whitespace-only lines
             if line.strip() == "":
                 continue
-            tokens.append(Token("NEWLINE", "\\n", line_num, prev_indent))
+            # tokens.append(Token("NEWLINE", "\\n", line_num, prev_indent))
 
             # Check for multi-line string start
             multiline_match = re.match(r'(\"\"\"|\'\'\')', line)
