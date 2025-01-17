@@ -110,54 +110,88 @@ class Lexer:
     def count_lines(self, text):
         """Count the number of newlines in a piece of text"""
         return text.count('\n')
-
+    
     def tokenize(self) -> list:
-        """
-        Tokenize the input text into a list of tokens.
-        
-        Returns:
-            list: List of Token objects
-        """
         tokens = []
         line_num = 1
-        current_indent = 0
-        
-        for token_match in self.token_regex.finditer(self.input_text):
-            kind = token_match.lastgroup    # The last matched group name (token type)
-            value = token_match.group()     # Actual token value
-            
-            # Handle indentation
-            if kind == 'INDENT':
-                current_indent = self.calculate_indent_level(value)
+        prev_indent = 0
+        self.indent_stack = [0]  # Stack to track indentation levels
+        in_multiline_string = False  # Track if we're inside a multi-line string
+        multiline_string_delimiter = None  # Track the delimiter used for the multi-line string
+        multiline_string_value = ""  # Store the content of the multi-line string
+        multiline_string_start_line = 0
+
+        lines = self.input_text.splitlines(keepends=True)
+
+        for line in lines:
+            if in_multiline_string:
+                # Append the current line to the multi-line string content
+                multiline_string_value += line
+                if multiline_string_delimiter in line:
+                    # Detect closing delimiter
+                    in_multiline_string = False
+                    tokens.append(
+                        Token("MULTI_LINE_STRING", multiline_string_value.strip(), multiline_string_start_line, prev_indent)
+                    )
+                    multiline_string_value = ""
+                    multiline_string_delimiter = None
                 continue
-            
-            # Count lines for multi-line tokens
-            lines_in_token = self.count_lines(value)
-            
-            # Handle different token types
-            if kind == 'NEWLINE':
-                tokens.append(Token(kind, r'\n', line_num, current_indent))
-                line_num += 1
-                current_indent = 0
-            elif kind == 'MULTI_LINE_COMMENT':
-                # Add the multi-line comment token with its starting line
-                tokens.append(Token(kind, value, line_num, current_indent))
-                line_num += lines_in_token
-            elif kind == 'STRING' and lines_in_token > 0:
-                # Handle multi-line strings
-                tokens.append(Token(kind, value, line_num, current_indent))
-                line_num += lines_in_token
-            else:
-                # Handle all other tokens
-                if kind == 'IDENTIFIER' and value in self.keywords:
-                    kind = 'KEYWORD'
-                if kind != 'SINGLE_LINE_COMMENT' or self.include_comments:  # Optional comment inclusion
-                    tokens.append(Token(kind, value, line_num, current_indent))
-                if kind == 'SINGLE_LINE_COMMENT':
-                    tokens.append(Token('NEWLINE', r'\n', line_num, current_indent))
-                    line_num += 1
+
+            # Detect empty or whitespace-only lines
+            if line.strip() == "":
+                continue
+            tokens.append(Token("NEWLINE", "\\n", line_num, prev_indent))
+
+            # Check for multi-line string start
+            multiline_match = re.match(r'(\"\"\"|\'\'\')', line)
+            if multiline_match:
+                in_multiline_string = True
+                multiline_string_delimiter = multiline_match.group()
+                multiline_string_value = line
+                multiline_string_start_line = line_num
+                continue
+
+            # Calculate current indentation level
+            indent_match = re.match(r"[ \t]*", line)
+            if indent_match:
+                indent_str = indent_match.group()
+                current_indent = self.calculate_indent_level(indent_str)
+
+                if current_indent > prev_indent:
+                    # New indentation level
+                    self.indent_stack.append(current_indent)
+                    tokens.append(Token("INDENT", indent_str, line_num, current_indent))
+                elif current_indent < prev_indent:
+                    # Dedentation (possibly multiple levels)
+                    while current_indent < self.indent_stack[-1]:
+                        self.indent_stack.pop()
+                        tokens.append(Token("DEDENT", "", line_num, self.indent_stack[-1]))
+
+                prev_indent = current_indent
+
+            # Process tokens in the line
+            for token_match in self.token_regex.finditer(line):
+                kind = token_match.lastgroup
+                value = token_match.group()
+
+                if kind == "IDENTIFIER" and value in self.keywords:
+                    kind = "KEYWORD"
+
+                if kind != "SINGLE_LINE_COMMENT" or self.include_comments:
+                    tokens.append(Token(kind, value, line_num, prev_indent))
+
+            line_num += 1
+
+        # Handle remaining dedentations at EOF
+        while self.indent_stack[-1] > 0:
+            self.indent_stack.pop()
+            tokens.append(Token("DEDENT", "", line_num, self.indent_stack[-1]))
+
         self.tokens = tokens
         return tokens
+
+
+
 
     def get_patterns(self):
         """
