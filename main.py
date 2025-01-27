@@ -2,7 +2,7 @@ import streamlit as st
 from code_editor import code_editor
 import pandas as pd
 
-from lexer import Lexer, Token
+from lexer import Lexer
 
 # Page config
 st.set_page_config(page_title="Worm Code Tokenizer", page_icon="🪱", layout="wide")
@@ -11,7 +11,7 @@ st.set_page_config(page_title="Worm Code Tokenizer", page_icon="🪱", layout="w
 st.title("*Worm* Code Tokenizer / Lexical Analyzer")
 
 # Create two columns
-left_col, right_col = st.columns(2, border=True)
+left_col, right_col = st.columns(2, border=False)
 
 with left_col:
     st.subheader("Code Input")
@@ -67,10 +67,10 @@ with left_col:
         # Convert tokens to DataFrame
         df = pd.DataFrame(
             [{
+                "Line": token.line,
+                "Column": token.column,
                 "Type": token.type,
                 "Value": token.value,
-                "Line": token.line,
-                "Indent": token.indent_level
             } for token in tokens]
         )
 
@@ -81,10 +81,10 @@ with left_col:
                 st.dataframe(
                     df,
                     column_config={
+                        "Line": st.column_config.NumberColumn("Line #"),
+                        "Column": st.column_config.NumberColumn("Col #"),
                         "Type": st.column_config.TextColumn("Token Type", width="medium"),
                         "Value": st.column_config.TextColumn("Value", width="medium"),
-                        "Line": st.column_config.NumberColumn("Line #"),
-                        "Indent": st.column_config.NumberColumn("Indent Level")
                     },
                     hide_index=True,
                     use_container_width=True,
