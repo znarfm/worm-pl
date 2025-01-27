@@ -6,5 +6,5 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "streamlit>=1.41.1",
-    "streamlit-code-editor>=0.1.22",
+    "streamlit-ace>=0.1.1",
 ]
