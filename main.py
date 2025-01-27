@@ -46,15 +46,18 @@ with left_col:
         # Create lexer instance and tokenize
         lexer = Lexer(code_input, include_comments=True)
         tokens = lexer.tokenize()
-        
+
         # Convert tokens to DataFrame
         df = pd.DataFrame(
-            [{
-                "Line": token.line,
-                "Column": token.column,
-                "Type": token.type,
-                "Value": token.value,
-            } for token in tokens]
+            [
+                {
+                    "Line": token.line,
+                    "Column": token.column,
+                    "Type": token.type,
+                    "Value": token.value,
+                }
+                for token in tokens
+            ]
         )
 
         # Display results in right column
