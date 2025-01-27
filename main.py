@@ -1,5 +1,5 @@
 import streamlit as st
-from code_editor import code_editor
+from streamlit_ace import st_ace
 import pandas as pd
 
 from lexer import Lexer
@@ -30,36 +30,19 @@ with left_col:
     if uploaded_file is not None:
         st.session_state.code_content = uploaded_file.getvalue().decode("utf-8")
 
-    custom_btns = [
-        {
-            "name": "Copy",
-            "feather": "Copy",
-            "commands": ["copyAll"],
-            "style": {"top": "0.46rem", "right": "0.4rem"},
-        },
-        {
-            "name": "Tokenize",
-            "hasText": True,
-            "feather": "Check",
-            "alwaysOn": True,
-            "commands": ["submit"],
-            "style": {"bottom": "0.46rem", "right": "0.4rem"},
-        },
-    ]
-    # Text area for code input - now using session state
-    response_dict = code_editor(
-        code=st.session_state.code_content,
-        height=[10, 20],
-        lang="python",
-        theme="dark",
-        focus=True,
-        buttons=custom_btns,
+    # Text area for code input
+    code_input = st_ace(
+        value=st.session_state.code_content,
+        min_lines=10,
+        language="python",
+        theme="dracula",
+        show_gutter=True,
+        auto_update=False,
+        font_size=20,
     )
 
     # Tokenize handler
-    if response_dict.get("text", not None):
-        code_input = response_dict.get("text")
-        
+    if code_input:
         # Create lexer instance and tokenize
         lexer = Lexer(code_input, include_comments=True)
         tokens = lexer.tokenize()
@@ -83,8 +66,8 @@ with left_col:
                     column_config={
                         "Line": st.column_config.NumberColumn("Line #"),
                         "Column": st.column_config.NumberColumn("Col #"),
-                        "Type": st.column_config.TextColumn("Token Type", width="medium"),
-                        "Value": st.column_config.TextColumn("Value", width="medium"),
+                        "Type": st.column_config.TextColumn("Token", width="medium"),
+                        "Value": st.column_config.TextColumn("Lexeme", width="medium"),
                     },
                     hide_index=True,
                     use_container_width=True,
