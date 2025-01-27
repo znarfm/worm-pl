@@ -2,7 +2,7 @@ import streamlit as st
 from code_editor import code_editor
 import pandas as pd
 
-from lexer import Lexer, Token
+from lexer import Lexer
 
 # Page config
 st.set_page_config(page_title="Worm Code Tokenizer", page_icon="🪱", layout="wide")
@@ -68,9 +68,9 @@ with left_col:
         df = pd.DataFrame(
             [{
                 "Line": token.line,
+                "Column": token.column,
                 "Type": token.type,
                 "Value": token.value,
-                "Indent": token.indent_level
             } for token in tokens]
         )
 
@@ -82,9 +82,9 @@ with left_col:
                     df,
                     column_config={
                         "Line": st.column_config.NumberColumn("Line #"),
+                        "Column": st.column_config.NumberColumn("Col #"),
                         "Type": st.column_config.TextColumn("Token Type", width="medium"),
                         "Value": st.column_config.TextColumn("Value", width="medium"),
-                        "Indent": st.column_config.NumberColumn("Indent Level")
                     },
                     hide_index=True,
                     use_container_width=True,

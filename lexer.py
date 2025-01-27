@@ -2,20 +2,20 @@ import re  # module for regular expressions
 
 class Token:
     """A simple class to represent tokens"""
-    def __init__(self, type, value, line, indent_level=0):
+    def __init__(self, type, value, line, column):
         self.type = type              # token type (e.g., NUMBER, IDENTIFIER)
         self.value = value            # actual token value
         self.line = line              # line number in source code
-        self.indent_level = indent_level  # indentation level (0, 1, 2, etc.)
+        self.column = column          # column number in source code
     
     def __str__(self):
         """String representation of the token"""
-        return f'Type: {self.type:<15} Value: {self.value:<15} Line: {self.line:<4} Indent: {self.indent_level}'
+        return f'Type: {self.type:<15} Value: {self.value:<15} Line: {self.line:<4} Col: {self.column}'
 
 class Lexer:
     def __init__(self, input_text, include_comments=False):
         self.input_text = input_text
-        self.current_line = 1  # Start from line 1
+        self.current_line = 1
         self.pos = 0
         self.tokens = []
         self.current_char = self.input_text[self.pos]
@@ -23,27 +23,37 @@ class Lexer:
         self.patterns = {
             # Whitespace
             "NEWLINE": r"\r\n|\n|\r",
-            "INDENT": r"^[ \t]+",
+            "WHITESPACE": r"[ \t]+",
 
             # Comments - updated patterns
             "SINGLE_LINE_COMMENT": r"#[^\n]*(?:\n|$)",
             "MULTI_LINE_COMMENT": r'"""[\s\S]*?"""|\'\'\'[\s\S]*?\'\'\'',
 
             # Numbers
-            "INTEGER": r"\b\d+\b",
             "FLOAT": r"\b\d*\.\d+([eE][+-]?\d+)?\b",
-            "HEX": r"\b0[xX][0-9a-fA-F]+\b",
+            "INTEGER": r"\b\d+\b",
+            # "HEX": r"\b0[xX][0-9a-fA-F]+\b",
             
             # Identifiers and keywords
             "IDENTIFIER": r"\b[a-zA-Z_][a-zA-Z0-9_]*\b",
             
+            'LAMBDA_ARROW': r'=>' ,
+
+            # Assignment Operators
+            "ASSIGN": r"=",
+            "PLUS_ASSIGN": r"\+=",
+            "MINUS_ASSIGN": r"-=",
+            "MULT_ASSIGN": r"\*=",
+            "DIV_ASSIGN": r"\/=",
+            "MOD_ASSIGN": r"%=",
+
             # Arithmetic Operators
             "PLUS": r"\+",
             "MINUS": r"-",
             "MULTIPLY": r"\*",
+            "FLOOR_DIV": r"\/\/",
             "DIVIDE": r"\/",
             "MODULO": r"%",
-            "FLOOR_DIV": r"\/\/",
             "POWER": r"\*\*",
             
             # Comparison Operators
@@ -53,14 +63,6 @@ class Lexer:
             "GREATER_EQUAL": r">=",
             "LESS_THAN": r"<",
             "GREATER_THAN": r">",
-            
-            # Assignment Operators
-            "ASSIGN": r"=",
-            "PLUS_ASSIGN": r"\+=",
-            "MINUS_ASSIGN": r"-=",
-            "MULT_ASSIGN": r"\*=",
-            "DIV_ASSIGN": r"\/=",
-            "MOD_ASSIGN": r"%=",
             
             # Logical Operators
             "AND": r"and",
@@ -77,9 +79,15 @@ class Lexer:
             "COMMA": r",",
             "DOT": r"\.",
             "COLON": r":",
+            "SEMICOLON": r";",
             
             # Strings
             "STRING": r'\"(?:\\.|[^"\\])*\"|\'(?:\\.|[^\'\\])*\'',
+
+            # Special tokens
+            'TRY_SHORT': r'!',
+            'NULL_COALESCING': r'\?\?',
+            'QUESTION_MARK': r'\?',
         }
         
         # Store keywords separately
@@ -88,7 +96,7 @@ class Lexer:
             'import', 'from', 'as', 'try', 'except', 'finally',
             'raise', 'with', 'print', 'assert', 'break', 'continue',
             'global', 'nonlocal', 'lambda', 'yield', 'in', 'is',
-        }
+        }   
         
         # Combine all patterns into a single regular expression
         # Use named groups to identify the token type
@@ -100,12 +108,6 @@ class Lexer:
         """String representation of the Lexer"""
         status = f"Number of Tokens: {len(self.tokens)}\n"
         return status
-
-    def calculate_indent_level(self, indent_str):
-        """Calculate indentation level based on spaces/tabs"""
-        if '\t' in indent_str:
-            return len(indent_str)  # Count tabs
-        return len(indent_str) // 4  # Assume 4 spaces per level
 
     def count_lines(self, text):
         """Count the number of newlines in a piece of text"""
@@ -120,15 +122,16 @@ class Lexer:
         """
         tokens = []
         line_num = 1
-        current_indent = 0
+        line_start = 0  # Track the start position of current line
         
         for token_match in self.token_regex.finditer(self.input_text):
             kind = token_match.lastgroup    # The last matched group name (token type)
             value = token_match.group()     # Actual token value
+            start_pos = token_match.start()
+            column = start_pos - line_start + 1  # Calculate column number
             
-            # Handle indentation
-            if kind == 'INDENT':
-                current_indent = self.calculate_indent_level(value)
+            # Skip whitespace
+            if kind == 'WHITESPACE':
                 continue
             
             # Count lines for multi-line tokens
@@ -136,26 +139,28 @@ class Lexer:
             
             # Handle different token types
             if kind == 'NEWLINE':
-                tokens.append(Token(kind, r'\n', line_num, current_indent))
                 line_num += 1
-                current_indent = 0
+                line_start = start_pos + len(value)  # Update line start position
+                continue  # We don't need to tokenize newlines anymore
             elif kind == 'MULTI_LINE_COMMENT':
-                # Add the multi-line comment token with its starting line
-                tokens.append(Token(kind, value, line_num, current_indent))
+                if self.include_comments:
+                    tokens.append(Token(kind, value, line_num, column))
                 line_num += lines_in_token
+                if lines_in_token > 0:
+                    line_start = start_pos + value.rfind('\n') + 1
             elif kind == 'STRING' and lines_in_token > 0:
-                # Handle multi-line strings
-                tokens.append(Token(kind, value, line_num, current_indent))
+                tokens.append(Token(kind, value, line_num, column))
                 line_num += lines_in_token
+                if lines_in_token > 0:
+                    line_start = start_pos + value.rfind('\n') + 1
             else:
-                # Handle all other tokens
                 if kind == 'IDENTIFIER' and value in self.keywords:
                     kind = 'KEYWORD'
                 if kind != 'SINGLE_LINE_COMMENT' or self.include_comments:  # Optional comment inclusion
-                    tokens.append(Token(kind, value, line_num, current_indent))
+                    tokens.append(Token(kind, value, line_num, column))
                 if kind == 'SINGLE_LINE_COMMENT':
-                    tokens.append(Token('NEWLINE', r'\n', line_num, current_indent))
                     line_num += 1
+                    line_start = start_pos + len(value)
         self.tokens = tokens
         return tokens
 
@@ -187,17 +192,26 @@ class Lexer:
             print(token)  # Uses Token.__str__ method
 
 # Example usage:
-test_code = '''def main():
-    # This is a single line comment
-    """
-    This is a multi-line
-    comment that spans
-    several lines
-    """
-    x = 42  # Assigning a number
-    if x > 0:
-        print("Positive")
-    print("Done")'''
+# test_code = '''def main() {
+#     # This is a single line comment
+#     """
+#     This is a multi-line
+#     comment that spans
+#     several lines
+#     """
+#     x = 42;  # Assigning a number
+#     if (x > 0) {
+#         print("Positive");
+#     };
+#     print("Done");
+# }'''
+
+test_code = '''default_user = {
+    name: "Guest",
+    role: "Viewer"
+}
+current_user = user ?? default_user
+welcome_message = current_user?name ? "Welcome, " + current_user.name : "Welcome!"'''
 
 lexer = Lexer(test_code, include_comments=True)
 print("Input:")
