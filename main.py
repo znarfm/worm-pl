@@ -17,7 +17,7 @@ with left_col:
     st.subheader("Code Input")
     # Store uploaded content in session state to persist between rerenders
     if "code_content" not in st.session_state:
-        st.session_state.code_content = 'print("Hello, World!")'
+        st.session_state.code_content = 'print("Hello, Worm!");'
 
     # File uploader
     uploaded_file = st.file_uploader(
