@@ -39,6 +39,14 @@ class Lexer:
             
             'LAMBDA_ARROW': r'=>' ,
 
+            # Comparison Operators
+            "EQUALS": r"==",
+            "NOT_EQUALS": r"!=",
+            "LESS_EQUAL": r"<=",
+            "GREATER_EQUAL": r">=",
+            "LESS_THAN": r"<",
+            "GREATER_THAN": r">",
+
             # Assignment Operators
             "ASSIGN": r"=",
             "PLUS_ASSIGN": r"\+=",
@@ -55,14 +63,6 @@ class Lexer:
             "DIVIDE": r"\/",
             "MODULO": r"%",
             "POWER": r"\*\*",
-            
-            # Comparison Operators
-            "EQUALS": r"==",
-            "NOT_EQUALS": r"!=",
-            "LESS_EQUAL": r"<=",
-            "GREATER_EQUAL": r">=",
-            "LESS_THAN": r"<",
-            "GREATER_THAN": r">",
             
             # Logical Operators
             "AND": r"and",
@@ -101,6 +101,7 @@ class Lexer:
         # Combine all patterns into a single regular expression
         # Use named groups to identify the token type
         pattern_strings = [f'(?P<{name}>{pattern})' for name, pattern in self.patterns.items()]
+        pattern_strings.append(r'(?P<INVALID>.)')
         # Join all patterns with the OR operator '|'
         self.token_regex = re.compile('|'.join(pattern_strings))
 
@@ -142,6 +143,8 @@ class Lexer:
                 line_num += 1
                 line_start = start_pos + len(value)  # Update line start position
                 continue  # We don't need to tokenize newlines anymore
+            elif kind == 'INVALID':
+                tokens.append(Token('INVALID', value, line_num, column))
             elif kind == 'MULTI_LINE_COMMENT':
                 if self.include_comments:
                     tokens.append(Token(kind, value, line_num, column))
