@@ -34,9 +34,47 @@ class Lexer:
             "INTEGER": r"\b\d+\b",
             # "HEX": r"\b0[xX][0-9a-fA-F]+\b",
             
+            'TYPE_INT': r'\bint\b',
+            'TYPE_CHAR': r'\bchar\b',
+            'TYPE_FLOAT': r'\bfloat\b',
+            'TYPE_STRING': r'\bstr\b',
+            'IF': r'\bif\b',
+            'ELSEIF': r'\belif\b',
+            'ELSE': r'\belse\b',
+            'WHILE': r'\bwhile\b',
+            'FOR': r'\bfor\b',
+            'DEF': r'\bdef\b',
+            'RETURN': r'\breturn\b',
+            'CLASS': r'\bclass\b',
+            'IMPORT': r'\bimport\b',
+            'FROM': r'\bfrom\b',
+            'AS': r'\bas\b',
+            'TRY': r'\btry\b',
+            'EXCEPT': r'\bexcept\b',
+            'FINALLY': r'\bfinally\b',
+            'RAISE': r'\braise\b',
+            'WITH': r'\bwith\b',
+            'STDOUT': r'\bprint\b',
+            'BREAK': r'\bbreak\b',
+            'CONTINUE': r'\bcontinue\b',
+            'NOTIN': r'\bnot in\b',
+            'IN': r'\bin\b',
+            'IS': r'\bis\b',
+
+            # Booleans
+            "TRUE": r"\bTrue\b",
+            "FALSE": r"\bFalse\b",
+            "NULL": r"\bNone\b",
+
+            # Logical Operators
+            "NOT": r"not",
+            "AND": r"and",
+            "OR": r"or",
+
             # Identifiers and keywords
             "IDENTIFIER": r"\b[a-zA-Z_][a-zA-Z0-9_]*\b",
             
+            'ARROW': r'->',
             'LAMBDA_ARROW': r'=>' ,
 
             # Comparison Operators
@@ -64,11 +102,6 @@ class Lexer:
             "MODULO": r"%",
             "POWER": r"\*\*",
             
-            # Logical Operators
-            "AND": r"and",
-            "OR": r"or",
-            "NOT": r"not",
-            
             # Delimiters
             "LEFT_PAREN": r"\(",
             "RIGHT_PAREN": r"\)",
@@ -90,13 +123,9 @@ class Lexer:
             'QUESTION_MARK': r'\?',
         }
         
-        # Store keywords separately
-        self.keywords = {
-            'if', 'else', 'while', 'for', 'def', 'return', 'class',
-            'import', 'from', 'as', 'try', 'except', 'finally',
-            'raise', 'with', 'print', 'assert', 'break', 'continue',
-            'global', 'nonlocal', 'lambda', 'yield', 'in', 'is',
-        }   
+
+        # No need for keywords set anymore since they're in patterns
+        self.keywords = set()
         
         # Combine all patterns into a single regular expression
         # Use named groups to identify the token type
@@ -157,8 +186,6 @@ class Lexer:
                 if lines_in_token > 0:
                     line_start = start_pos + value.rfind('\n') + 1
             else:
-                if kind == 'IDENTIFIER' and value in self.keywords:
-                    kind = 'KEYWORD'
                 if kind != 'SINGLE_LINE_COMMENT' or self.include_comments:  # Optional comment inclusion
                     tokens.append(Token(kind, value, line_num, column))
                 if kind == 'SINGLE_LINE_COMMENT':
