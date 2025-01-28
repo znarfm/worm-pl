@@ -97,13 +97,14 @@ with left_col:
                 )
             else:
                 st.info("No tokens found in the input code.")
-            st.divider()
-            with st.expander("Individual patterns"):
-                st.write(lexer.get_patterns())
-            with st.expander("Complete pattern"):
-                st.write(lexer.get_complete_pattern())
 
     else:
         with right_col:
             st.subheader("Tokenization Results")
             st.error("Please enter some code or upload a file first.")
+
+st.divider()
+with st.expander("Individual patterns"):
+    st.write(lexer.get_patterns())
+with st.expander("Complete pattern"):
+    st.write(lexer.get_complete_pattern())
