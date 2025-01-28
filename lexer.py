@@ -26,8 +26,8 @@ class Lexer:
         self.patterns = {
             # Whitespace
             "NEWLINE": r"\r\n|\n|\r",
-            "WHITESPACE": r"[ \t]+",
-            # Comments - updated patterns
+            "WHITESPACE": r"[\s]+",
+            # Comments
             "SINGLE_LINE_COMMENT": r"#[^\n]*(?:\n|$)",
             "MULTI_LINE_COMMENT": r'"""[\s\S]*?"""|\'\'\'[\s\S]*?\'\'\'',
             # Numbers
@@ -43,7 +43,7 @@ class Lexer:
             "ELSE": r"\belse\b",
             "WHILE": r"\bwhile\b",
             "FOR": r"\bfor\b",
-            "DEF": r"\bdef\b",
+            "DEFINE": r"\bdef\b",
             "RETURN": r"\breturn\b",
             "CLASS": r"\bclass\b",
             "IMPORT": r"\bimport\b",
@@ -196,14 +196,15 @@ class Lexer:
         """
         return self.patterns
 
-    def get_complete_pattern(self) -> str:
+    def get_complete_pattern(self, console_readable=False) -> str:
         """Returns the complete regex pattern used for tokenization."""
         # Get the scanner's pattern directly
         pattern = self.token_regex.pattern
         
-        # Make it more readable by adding newlines between alternatives
-        readable_pattern = pattern.replace('(?P', '\n(?P')
-        return readable_pattern
+        # Make it more readable by adding newlines between patterns
+        if console_readable:
+            pattern = pattern.replace('(?P', '\n(?P')
+        return pattern
 
     def print_input_code(self):
         """
@@ -254,4 +255,4 @@ lexer.tokenize()
 # lexer.print_tokens()
 # print(lexer)
 print(lexer.get_patterns(), end="\n\n")
-print(lexer.get_complete_pattern())
+print(lexer.get_complete_pattern(console_readable=True))
