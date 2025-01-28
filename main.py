@@ -58,6 +58,7 @@ with left_col:
         show_gutter=True,
         auto_update=False,
         font_size=20,
+        wrap=True,
     )
 
     # Tokenize handler
@@ -96,6 +97,11 @@ with left_col:
                 )
             else:
                 st.info("No tokens found in the input code.")
+            st.divider()
+            with st.expander("Individual patterns"):
+                st.write(lexer.get_patterns())
+            with st.expander("Complete pattern"):
+                st.write(lexer.get_complete_pattern())
 
     else:
         with right_col:
