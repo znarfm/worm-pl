@@ -84,8 +84,8 @@ smmap==5.0.2
 streamlit==1.41.1
     # via
     #   worm-pl (pyproject.toml)
-    #   streamlit-code-editor
-streamlit-code-editor==0.1.22
+    #   streamlit-ace
+streamlit-ace==0.1.1
     # via worm-pl (pyproject.toml)
 tenacity==9.0.0
     # via streamlit
