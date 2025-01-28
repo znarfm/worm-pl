@@ -3,6 +3,7 @@ import argparse
 import sys
 from pathlib import Path
 
+
 class Token:
     """A simple class to represent tokens"""
 
@@ -205,10 +206,10 @@ class Lexer:
         """Returns the complete regex pattern used for tokenization."""
         # Get the scanner's pattern directly
         pattern = self.token_regex.pattern
-        
+
         # Make it more readable by adding newlines between patterns
         if console_readable:
-            pattern = pattern.replace('(?P', '\n(?P')
+            pattern = pattern.replace("(?P", "\n(?P")
         return pattern
 
     def print_input_code(self):
@@ -237,17 +238,24 @@ def print_tokens_table(tokens):
     print("-" * 80)
     print(f"{'Line':<6} {'Column':<8} {'Token Type':<20} {'Value':<30}")
     print("-" * 80)
-    
+
     # Print each token
     for token in tokens:
-        print(f"{token.line:<6} {token.column:<8} {token.type:<20} {repr(token.value):<30}")
+        print(
+            f"{token.line:<6} {token.column:<8} {token.type:<20} {repr(token.value):<30}"
+        )
     print("-" * 80)
 
+
 def main():
-    parser = argparse.ArgumentParser(description='Worm Programming Language Lexer')
-    parser.add_argument('file', type=str, help='Path to the .worm file to tokenize')
-    parser.add_argument('-p', '--patterns', action='store_true', help='Show regex patterns')
-    parser.add_argument('-c', '--comments', action='store_true', help='Include comments in tokenization')
+    parser = argparse.ArgumentParser(description="Worm Programming Language Lexer")
+    parser.add_argument("file", type=str, help="Path to the .worm file to tokenize")
+    parser.add_argument(
+        "-p", "--patterns", action="store_true", help="Show regex patterns"
+    )
+    parser.add_argument(
+        "-c", "--comments", action="store_true", help="Include comments in tokenization"
+    )
     args = parser.parse_args()
 
     try:
@@ -256,13 +264,13 @@ def main():
         if not file_path.exists():
             print(f"Error: File '{args.file}' not found")
             sys.exit(1)
-        
-        code = file_path.read_text(encoding='utf-8')
-        
+
+        code = file_path.read_text(encoding="utf-8")
+
         # Print input code
         print("\nInput Code:")
         print("-" * 40)
-        for i, line in enumerate(code.split('\n'), 1):
+        for i, line in enumerate(code.split("\n"), 1):
             print(f"{i:2d} | {line}")
         print("-" * 40)
 
@@ -282,6 +290,7 @@ def main():
     except Exception as e:
         print(f"Error: {str(e)}")
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

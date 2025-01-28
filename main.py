@@ -4,13 +4,15 @@ import pandas as pd
 from pathlib import Path
 from lexer import Lexer
 
+
 def load_samples():
     samples = {}
     samples_dir = Path(__file__).parent / "samples"
     if samples_dir.exists():
         for file in samples_dir.glob("*.worm"):
-            samples[file.stem] = file.read_text(encoding='utf-8')
+            samples[file.stem] = file.read_text(encoding="utf-8")
     return samples
+
 
 # Page config
 st.set_page_config(page_title="Worm Code Tokenizer", page_icon="🪱", layout="wide")
@@ -35,7 +37,7 @@ with left_col:
             accept_multiple_files=False,
             help="Only .worm files are allowed",
         )
-        
+
         if uploaded_file is not None:
             st.session_state.code_content = uploaded_file.getvalue().decode("utf-8")
 
