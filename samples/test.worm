@@ -5,7 +5,7 @@ def main() {
     comment that spans
     several lines
     """
-    x = 42;  # Assigning a number
+    x:int = 42;  # Assigning a number
     if (x > 0) {
         print("Positive");
     };
