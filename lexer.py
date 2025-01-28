@@ -1,5 +1,7 @@
 import re  # module for regular expressions
-from dataclasses import dataclass
+import argparse
+import sys
+from pathlib import Path
 
 class Token:
     """A simple class to represent tokens"""
@@ -228,34 +230,62 @@ class Lexer:
             print(token)  # Uses Token.__str__ method
 
 
-# Example usage:
-# test_code = '''def main() {
-#     # This is a single line comment
-#     """
-#     This is a multi-line
-#     comment that spans
-#     several lines
-#     """
-#     x = 42;  # Assigning a number
-#     if (x > 0) {
-#         print("Positive");
-#     };
-#     print("Done");
-# }'''
+def print_tokens_table(tokens):
+    """Print tokens in a formatted table"""
+    # Print table header
+    print("\nTokenization Results:")
+    print("-" * 80)
+    print(f"{'Line':<6} {'Column':<8} {'Token Type':<20} {'Value':<30}")
+    print("-" * 80)
+    
+    # Print each token
+    for token in tokens:
+        print(f"{token.line:<6} {token.column:<8} {token.type:<20} {repr(token.value):<30}")
+    print("-" * 80)
 
-test_code = '''default_user = {
-    name: "Guest",
-    role: "Viewer"
-}
-current_user = user ?? default_user
-welcome_message = current_user?name ? "Welcome, " + current_user.name : "Welcome!"'''
+def main():
+    parser = argparse.ArgumentParser(description='Worm Programming Language Lexer')
+    parser.add_argument('file', type=str, help='Path to the .worm file to tokenize')
+    parser.add_argument('-p', '--patterns', action='store_true', help='Show regex patterns')
+    parser.add_argument('-c', '--comments', action='store_true', help='Include comments in tokenization')
+    args = parser.parse_args()
 
-lexer = Lexer(test_code, include_comments=True)
-print("Input:")
-# lexer.print_input_code()
-print("\nTokens:")
-lexer.tokenize()
-# lexer.print_tokens()
-# print(lexer)
-print(lexer.get_patterns(), end="\n\n")
-print(lexer.get_complete_pattern(console_readable=True))
+    try:
+        # Read input file
+        file_path = Path(args.file)
+        if not file_path.exists():
+            print(f"Error: File '{args.file}' not found")
+            sys.exit(1)
+        
+        code = file_path.read_text(encoding='utf-8')
+        
+        # Print input code
+        print("\nInput Code:")
+        print("-" * 40)
+        for i, line in enumerate(code.split('\n'), 1):
+            print(f"{i:2d} | {line}")
+        print("-" * 40)
+
+        # Tokenize and print results
+        lexer = Lexer(code, include_comments=args.comments)
+        tokens = lexer.tokenize()
+        print_tokens_table(tokens)
+
+        # Show patterns if requested
+        if args.patterns:
+            print("\nToken Patterns:")
+            print("-" * 80)
+            for name, pattern in lexer.get_patterns().items():
+                print(f"{name:<20} {pattern}")
+            print("-" * 80)
+
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        sys.exit(1)
+
+if __name__ == "__main__":
+    main()
+
+# Remove or comment out the test code at the bottom
+# test_code = '''default_user = ...'''
+# ...
