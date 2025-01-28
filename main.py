@@ -29,7 +29,7 @@ with left_col:
     if "code_content" not in st.session_state:
         st.session_state.code_content = 'print("Hello, Worm!");'
 
-    with st.expander("Presets", expanded=True):
+    with st.expander("Presets", icon="📦", expanded=False):
         # File uploader
         uploaded_file = st.file_uploader(
             "Upload a worm code file",
@@ -106,7 +106,7 @@ with left_col:
             st.error("Please enter some code or upload a file first.")
 
 st.divider()
-with st.expander("Individual patterns"):
+with st.expander("Individual patterns", icon="🔍"):
     st.write(lexer.get_patterns())
-with st.expander("Complete pattern"):
-    st.write(lexer.get_complete_pattern())
+with st.expander("Complete pattern", icon="🌎"):
+    st.write(repr(lexer.get_complete_pattern()))

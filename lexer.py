@@ -36,7 +36,6 @@ class Lexer:
             # Numbers
             "FLOAT": r"\b\d*\.\d+([eE][+-]?\d+)?\b",
             "INTEGER": r"\b\d+\b",
-            # "HEX": r"\b0[xX][0-9a-fA-F]+\b",
             "TYPE_INT": r"\b:int\b",
             "TYPE_CHAR": r"\b:char\b",
             "TYPE_FLOAT": r"\b:float\b",
