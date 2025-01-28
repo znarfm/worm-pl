@@ -43,6 +43,8 @@ class Lexer:
             "TYPE_STRING": r"\b:str\b",
             "TYPE_LIST": r"\b:list\b",
             "TYPE_DICT": r"\b:dict\b",
+            "TYPE_SET": r"\b:set\b",
+            "TYPE_TUPLE": r"\b:tuple\b",
             "TYPE_BOOL": r"\b:bool\b",
             "IF": r"\bif\b",
             "ELSEIF": r"\belif\b",
@@ -69,6 +71,7 @@ class Lexer:
             # Booleans
             "TRUE": r"\bTrue\b",
             "FALSE": r"\bFalse\b",
+            # Special
             "NULL": r"\bNone\b",
             # Logical Operators
             "NOT": r"not",
@@ -127,9 +130,6 @@ class Lexer:
             "NULL_COALESCING": r"\?\?",
             "QUESTION_MARK": r"\?",
         }
-
-        # No need for keywords set anymore since they're in patterns
-        self.keywords = set()
 
         # Combine all patterns into a single regular expression
         # Use named groups to identify the token type
@@ -303,7 +303,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-# Remove or comment out the test code at the bottom
-# test_code = '''default_user = ...'''
-# ...
