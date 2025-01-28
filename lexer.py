@@ -1,5 +1,5 @@
 import re  # module for regular expressions
-
+from dataclasses import dataclass
 
 class Token:
     """A simple class to represent tokens"""
@@ -196,6 +196,15 @@ class Lexer:
         """
         return self.patterns
 
+    def get_complete_pattern(self) -> str:
+        """Returns the complete regex pattern used for tokenization."""
+        # Get the scanner's pattern directly
+        pattern = self.token_regex.pattern
+        
+        # Make it more readable by adding newlines between alternatives
+        readable_pattern = pattern.replace('(?P', '\n(?P')
+        return readable_pattern
+
     def print_input_code(self):
         """
         Print the input code with proper formatting and line numbers.
@@ -239,9 +248,10 @@ welcome_message = current_user?name ? "Welcome, " + current_user.name : "Welcome
 
 lexer = Lexer(test_code, include_comments=True)
 print("Input:")
-lexer.print_input_code()
+# lexer.print_input_code()
 print("\nTokens:")
 lexer.tokenize()
-lexer.print_tokens()
-print(lexer)
-# print(lexer.get_patterns())
+# lexer.print_tokens()
+# print(lexer)
+print(lexer.get_patterns(), end="\n\n")
+print(lexer.get_complete_pattern())
