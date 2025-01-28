@@ -126,7 +126,7 @@ class Lexer:
             # Strings
             "STRING": r'\"(?:\\.|[^"\\])*\"|\'(?:\\.|[^\'\\])*\'',
             # Special tokens
-            "TRY_SHORT": r"!",
+            "EXCLAIM": r"!",
             "NULL_COALESCING": r"\?\?",
             "QUESTION_MARK": r"\?",
         }
