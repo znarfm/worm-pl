@@ -19,16 +19,38 @@ with left_col:
     if "code_content" not in st.session_state:
         st.session_state.code_content = 'print("Hello, Worm!");'
 
-    # File uploader
-    uploaded_file = st.file_uploader(
-        "Upload a worm code file",
-        type=["worm"],
-        accept_multiple_files=False,
-        help="Only .worm files are allowed",
-    )
+    with st.expander("Presets", expanded=True):
+        # File uploader
+        uploaded_file = st.file_uploader(
+            "Upload a worm code file",
+            type=["worm"],
+            accept_multiple_files=False,
+            help="Only .worm files are allowed",
+        )
+        
+        if uploaded_file is not None:
+            st.session_state.code_content = uploaded_file.getvalue().decode("utf-8")
 
-    if uploaded_file is not None:
-        st.session_state.code_content = uploaded_file.getvalue().decode("utf-8")
+        
+        preset_buttons_columns = st.columns(6)
+        with preset_buttons_columns[0]:
+            if st.button("Hello"):
+                st.session_state.code_content = 'print("Hello, Worm!");'
+        with preset_buttons_columns[1]:
+            if st.button("Math"):
+                st.session_state.code_content = 'result = 2 + 3 * 4;'
+        with preset_buttons_columns[2]:
+            if st.button("Vars"):
+                st.session_state.code_content = 'let x = 42;\nlet y = x + 8;'
+        with preset_buttons_columns[3]:
+            if st.button("Loop"):
+                st.session_state.code_content = 'for i in range(5) {\n    print(i);\n}'
+        with preset_buttons_columns[4]:
+            if st.button("Func"):
+                st.session_state.code_content = 'def add(a, b) {\n    return a + b;\n}'
+        with preset_buttons_columns[5]:
+            if st.button("Clear"):
+                st.session_state.code_content = ''
 
     # Text area for code input
     code_input = st_ace(
