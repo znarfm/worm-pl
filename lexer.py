@@ -32,7 +32,7 @@ class Lexer:
             "WHITESPACE": r"[\s]+",
             # Comments
             "SINGLE_LINE_COMMENT": r"#[^\n]*(?:\n|$)",
-            "MULTI_LINE_COMMENT": r'"""[\s\S]*?"""|\'\'\'[\s\S]*?\'\'\'',
+            "MULTI_LINE_COMMENT": r'~~[\s\S]*?~~',
             # Numbers
             "FLOAT": r"\b\d*\.\d+([eE][+-]?\d+)?\b",
             "INTEGER": r"\b\d+\b",
@@ -123,6 +123,7 @@ class Lexer:
             "COLON": r":",
             "SEMICOLON": r";",
             # Strings
+            "MULTI_LINE_STRING": r'"""[\s\S]*?"""|\'\'\'[\s\S]*?\'\'\'',
             "STRING": r'\"(?:\\.|[^"\\])*\"|\'(?:\\.|[^\'\\])*\'',
             # Special tokens
             "EXCLAIM": r"!",
