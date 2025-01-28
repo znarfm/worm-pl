@@ -34,8 +34,8 @@ class Lexer:
             "SINGLE_LINE_COMMENT": r"#[^\n]*(?:\n|$)",
             "MULTI_LINE_COMMENT": r'~~[\s\S]*?~~',
             # Numbers
-            "FLOAT": r"\b\d*\.\d+([eE][+-]?\d+)?\b",
-            "INTEGER": r"\b\d+\b",
+            "FLOAT": r"\b\d+(_?\d+)*\.\d+(_?\d+)*([eE][+-]?\d+(_?\d+)*)?\b",
+            "INTEGER": r"\b\d+(_?\d+)*\b",
             "TYPE_INT": r"\b:int\b",
             "TYPE_CHAR": r"\b:char\b",
             "TYPE_FLOAT": r"\b:float\b",
@@ -73,9 +73,9 @@ class Lexer:
             # Special
             "NULL": r"\bNone\b",
             # Logical Operators
-            "NOT": r"not",
-            "AND": r"and",
-            "OR": r"or",
+            "NOT": r"\bnot\b",
+            "AND": r"\band\b",
+            "OR": r"\bor\b",
             # Identifiers and keywords
             "IDENTIFIER": r"\b[a-zA-Z_][a-zA-Z0-9_]*\b",
             "ARROW": r"->",
