@@ -1,8 +1,16 @@
 import streamlit as st
 from streamlit_ace import st_ace
 import pandas as pd
-
+from pathlib import Path
 from lexer import Lexer
+
+def load_samples():
+    samples = {}
+    samples_dir = Path(__file__).parent / "samples"
+    if samples_dir.exists():
+        for file in samples_dir.glob("*.worm"):
+            samples[file.stem] = file.read_text(encoding='utf-8')
+    return samples
 
 # Page config
 st.set_page_config(page_title="Worm Code Tokenizer", page_icon="🪱", layout="wide")
@@ -31,26 +39,15 @@ with left_col:
         if uploaded_file is not None:
             st.session_state.code_content = uploaded_file.getvalue().decode("utf-8")
 
-        
-        preset_buttons_columns = st.columns(6)
-        with preset_buttons_columns[0]:
-            if st.button("Hello"):
-                st.session_state.code_content = 'print("Hello, Worm!");'
-        with preset_buttons_columns[1]:
-            if st.button("Math"):
-                st.session_state.code_content = 'result = 2 + 3 * 4;'
-        with preset_buttons_columns[2]:
-            if st.button("Vars"):
-                st.session_state.code_content = 'let x = 42;\nlet y = x + 8;'
-        with preset_buttons_columns[3]:
-            if st.button("Loop"):
-                st.session_state.code_content = 'for i in range(5) {\n    print(i);\n}'
-        with preset_buttons_columns[4]:
-            if st.button("Func"):
-                st.session_state.code_content = 'def add(a, b) {\n    return a + b;\n}'
-        with preset_buttons_columns[5]:
-            if st.button("Clear"):
-                st.session_state.code_content = ''
+        samples = load_samples()
+        if samples:
+            preset_buttons_columns = st.columns(len(samples))
+            for i, (name, code) in enumerate(samples.items()):
+                with preset_buttons_columns[i]:
+                    if st.button(name.title(), use_container_width=True):
+                        st.session_state.code_content = code
+        else:
+            st.warning("No sample files found in the samples directory")
 
     # Text area for code input
     code_input = st_ace(
