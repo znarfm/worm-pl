@@ -19,13 +19,13 @@ st.set_page_config(page_title="Worm Code Tokenizer", page_icon="./images/W.png",
 
 # Header
 st.logo("./images/W.png")
-st.title("*Worm* Code Tokenizer / Lexical Analyzer")
+st.title("*Worm* Code Tokenizer / Lexical Analyzer", anchor=False)
 
 # Create two columns
 left_col, right_col = st.columns(2, border=False)
 
 with left_col:
-    st.subheader("Code Input")
+    st.subheader("Code Input", anchor=False)
     # Store uploaded content in session state to persist between rerenders
     if "code_content" not in st.session_state:
         st.session_state.code_content = 'print("Hello, Worm!");'
@@ -85,7 +85,7 @@ with left_col:
 
         # Display results in right column
         with right_col:
-            st.subheader("Tokenization Results")
+            st.subheader("Tokenization Results", anchor=False)
             if not df.empty:
                 st.dataframe(
                     df,
