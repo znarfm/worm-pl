@@ -34,7 +34,7 @@ class Lexer:
             "SINGLE_LINE_COMMENT": r"#[^\n]*(?:\n|$)",
             "MULTI_LINE_COMMENT": r'~~[\s\S]*?~~',
             # Numbers
-            "FLOAT": r"\b\d+(_?\d+)*\.\d+(_?\d+)*([eE][+-]?\d+(_?\d+)*)?\b",
+            "FLOAT": r"(?<!\w)(\d+(_?\d+)*)?\.\d+(_?\d+)*([eE][+-]?\d+(_?\d+)*)?\b",
             "INTEGER": r"\b\d+(_?\d+)*\b",
             "TYPE_INT": r"\b:int\b",
             "TYPE_CHAR": r"\b:char\b",
@@ -162,7 +162,7 @@ class Lexer:
 
         for token_match in self.token_regex.finditer(self.input_text):
             kind = token_match.lastgroup  # The last matched group name (token type)
-            value = token_match.group()  # Actual token value
+            value = token_match.group()  # Actual token value / lexeme
             start_pos = token_match.start()
             column = start_pos - line_start + 1  # Calculate column number
 
@@ -177,7 +177,7 @@ class Lexer:
             if kind == "NEWLINE":
                 line_num += 1
                 line_start = start_pos + len(value)  # Update line start position
-                continue  # We don't need to tokenize newlines anymore
+                continue
             elif kind == "INVALID":
                 tokens.append(Token("INVALID", value, line_num, column))
             elif kind == "MULTI_LINE_COMMENT":

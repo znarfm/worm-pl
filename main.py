@@ -15,9 +15,10 @@ def load_samples():
 
 
 # Page config
-st.set_page_config(page_title="Worm Code Tokenizer", page_icon="🪱", layout="wide")
+st.set_page_config(page_title="Worm Code Tokenizer", page_icon="./images/W.png", layout="wide")
 
 # Header
+st.logo("./images/W.png")
 st.title("*Worm* Code Tokenizer / Lexical Analyzer")
 
 # Create two columns
