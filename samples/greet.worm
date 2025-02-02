@@ -1,7 +1,0 @@
-default_user = {
-    name: "Guest",
-    role: "Viewer"
-};
-current_user = user ?? default_user;
-welcome_message = current_user?name ? "Welcome, " + current_user.name : "Welcome!";
-print(welcome_message);

@@ -1,0 +1,3 @@
+3Dvector:list = [1,2,3];  # Invalid identifier
+num:int = _1;   # _1 will be an identifier, since it is a valid syntax for an identifier 
+broken_string:str = "Unclosed;

@@ -1,0 +1,27 @@
+# Variables
+name:str = "Alice";  # Basic assignment
+age:int = 2_8;  # Underscore in number
+price:float = 3.140_403; # Works on float as well
+is_admin:bool = True;
+empty = None;
+
+def factorial(n:int) -> int {
+    return 1 if n == 0 else n * factorial(n-1);
+}
+
+x = (5 + 3) * 2 // 4 ** 1;
+
+lambda = (x, y) => x ** y;
+
+x % 2 == 0 ? "Even" : "Odd";
+
+# Error handling example with a list
+get_item = (lst, index) => !(lst[index] -> IndexError: None);
+
+default_user = {
+    name: "Guest",
+    role: "Viewer"
+};
+current_user = user ?? default_user;
+welcome_message = current_user?name ? "Welcome, " + current_user.name : "Welcome!";
+print(welcome_message);

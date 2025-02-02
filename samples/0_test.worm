@@ -1,0 +1,136 @@
+# Assignment Operators
+=
++=
+-=
+*=
+/=
+%=
+//=
+**=
+
+# Arithmetic Operators
++
+-
+*
+/
+%
+//
+**
+
+# Relational or Comparison Operators
+==
+!=
+<
+>
+<=
+>=
+?
+
+# Logical Operators
+and
+or
+not
+
+# Identity Operators
+is
+is not
+
+# Membership Operators
+in 
+not in
+
+# Bitwise Operators
+&
+|
+^
+~
+<<
+>>
+
+# Special and New Operators
+!
+?
+?.
+??
+
+# Keywords and Reserved Words
+num:int
+:float
+:list
+:dict
+:set
+:tuple
+:str
+:bool
+if
+elif
+else
+for
+def
+return
+class
+import
+from
+as
+try
+except
+finally
+raise
+with
+print
+break
+continue
+=>
+True
+False
+None
+
+# Noise Words
+100_000
+50.000_234
+1_000_000.000_523_123
+
+# Comments
+# Single-line comment
+~~
+This is a
+multi-line comment
+~~
+
+# Delimiters and Brackets
+,
+;
+(
+)
+{
+}
+[
+]
+
+# Identifiers
+_valid
+valid_
+Valid100
+Val1d
+valid_identifier
+_valid1
+1invalid
+valid__alphabet
+casesensitiveidentifier
+CaseSensitiveIdentifier
+
+# Invalid
+@
+00invalid 
+valid#_2
+$ello
+10$2
+1.01.01
+0pen
+0open
+capt@
+name@name
+
+# Strings
+'single quotes'
+"double quotes"

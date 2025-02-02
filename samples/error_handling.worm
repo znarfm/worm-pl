@@ -1,2 +1,0 @@
-# Error handling example with a list
-get_item = (lst, index) => !(lst[index] -> IndexError: None);

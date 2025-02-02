@@ -1,0 +1,9 @@
+class User {
+    def __init__(self, name:str) {
+        self.name:str = name ?? "Anonymous"
+    }
+        
+    def greet(self) -> str {
+        return "Hello, " + self.name?.upper()
+    }
+}

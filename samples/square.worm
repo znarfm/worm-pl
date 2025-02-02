@@ -1,3 +1,0 @@
-# Working with data
-numbers:list = [1, 2, 3, 4, 5];
-squared_numbers:list = numbers.map(x => x**2);
