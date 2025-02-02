@@ -47,7 +47,7 @@ with left_col:
             preset_buttons_columns = st.columns(len(samples))
             for i, (name, code) in enumerate(samples.items()):
                 with preset_buttons_columns[i]:
-                    if st.button(name.title(), use_container_width=True):
+                    if st.button(name, use_container_width=True):
                         st.session_state.code_content = code
         else:
             st.warning("No sample files found in the samples directory")
@@ -60,7 +60,7 @@ with left_col:
         theme="dracula",
         show_gutter=True,
         auto_update=False,
-        font_size=20,
+        font_size=18,
         wrap=True,
     )
 
