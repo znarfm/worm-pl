@@ -29,7 +29,7 @@ class Lexer:
         self.patterns = {
             # Whitespace
             "NEWLINE": r"\n|\r\n?",
-            "WHITESPACE": r"[ \t\f]+",
+            "WHITESPACE": r"[ \t]+",
             # Comments
             "SINGLE_LINE_COMMENT": r"#[^\n]*",
             "MULTI_LINE_COMMENT": r"~~[\s\S]*?~~",
@@ -128,6 +128,7 @@ class Lexer:
             # Special tokens
             "EXCLAIM": r"!",
             "NULL_COALESCING": r"\?\?",
+            "OPTIONAL_CHAIN": r"\?\.",
             "QUESTION_MARK": r"\?",
             # End of file
             "EOF": r"\Z",
@@ -147,10 +148,6 @@ class Lexer:
         """String representation of the Lexer"""
         status = f"Number of Tokens: {len(self.tokens)}\n"
         return status
-
-    def count_lines(self, text):
-        """Count the number of newlines in a piece of text"""
-        return text.count("\n")
 
     def tokenize(self) -> list:
         """
@@ -173,35 +170,22 @@ class Lexer:
             if kind == "WHITESPACE":
                 continue
 
-            # Count lines for multi-line tokens
-            lines_in_token = self.count_lines(value)
-
-            # Handle different token types
             if kind == "NEWLINE":
                 line_num += 1
-                line_start = start_pos + len(value)  # Update line start position
+                line_start = start_pos + len(value)
                 continue
-            elif kind == "INVALID":
-                tokens.append(Token("INVALID", value, line_num, column))
-            elif kind == "MULTI_LINE_COMMENT":
-                if self.include_comments:
-                    tokens.append(Token(kind, value, line_num, column))
-                line_num += lines_in_token
-                if lines_in_token > 0:
-                    line_start = start_pos + value.rfind("\n") + 1
-            elif kind == "STRING" and lines_in_token > 0:
+
+            if not self.include_comments and kind in ["SINGLE_LINE_COMMENT", "MULTI_LINE_COMMENT"]:
+                continue
+            
+            if kind in ["MULTI_LINE_COMMENT", "STRING"]:
+                lines_in_token = value.count("\n")
                 tokens.append(Token(kind, value, line_num, column))
                 line_num += lines_in_token
                 if lines_in_token > 0:
                     line_start = start_pos + value.rfind("\n") + 1
             else:
-                if (
-                    kind != "SINGLE_LINE_COMMENT" or self.include_comments
-                ):  # Optional comment inclusion
-                    tokens.append(Token(kind, value, line_num, column))
-                if kind == "SINGLE_LINE_COMMENT":
-                    line_num += 1
-                    line_start = start_pos + len(value)
+                tokens.append(Token(kind, value, line_num, column))
         self.tokens = tokens
         return tokens
 
