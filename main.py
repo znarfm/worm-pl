@@ -45,7 +45,7 @@ with left_col:
         samples = load_samples()
         if samples:
             preset_buttons_columns = st.columns(len(samples))
-            for i, (name, code) in enumerate(samples.items()):
+            for i, (name, code) in enumerate(sorted(samples.items())):
                 with preset_buttons_columns[i]:
                     if st.button(name, use_container_width=True):
                         st.session_state.code_content = code
