@@ -54,7 +54,7 @@ not in
 ??
 
 # Keywords and Reserved Words
-num:int
+:int
 :float
 :list
 :dict
