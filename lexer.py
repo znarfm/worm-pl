@@ -34,8 +34,8 @@ class Lexer:
             "SINGLE_LINE_COMMENT": r"#[^\n]*(?:\n|$)",
             "MULTI_LINE_COMMENT": r'~~[\s\S]*?~~',
             # Numbers
-            "FLOAT": r"(?<!\w)(\d+(_?\d+)*)?\.\d+(_?\d+)*([eE][+-]?\d+(_?\d+)*)?\b",
-            "INTEGER": r"\b\d+(_?\d+)*\b",
+            "FLOAT": r"(?<!\w)-?(\d+(_?\d+)*)?\.\d+(_?\d+)*",
+            "INTEGER": r"(?<!\w)-?\d+(_?\d+)*",
             # Keywords
             "TYPE_INT": r"\b:int\b",
             "TYPE_CHAR": r"\b:char\b",
