@@ -28,11 +28,11 @@ class Lexer:
         self.include_comments = include_comments
         self.patterns = {
             # Whitespace
-            "NEWLINE": r"\r\n|\n|\r",
-            "WHITESPACE": r"[\s]+",
+            "NEWLINE": r"\n|\r\n?",
+            "WHITESPACE": r"[ \t\f]+",
             # Comments
-            "SINGLE_LINE_COMMENT": r"#[^\n]*(?:\n|$)",
-            "MULTI_LINE_COMMENT": r'~~[\s\S]*?~~',
+            "SINGLE_LINE_COMMENT": r"#[^\n]*",
+            "MULTI_LINE_COMMENT": r"~~[\s\S]*?~~",
             # Numbers
             "FLOAT": r"(?<!\w)-?(\d+(_?\d+)*)?\.\d+(_?\d+)*",
             "INTEGER": r"(?<!\w)-?\d+(_?\d+)*",
@@ -124,11 +124,15 @@ class Lexer:
             "SEMICOLON": r";",
             # Strings
             "MULTI_LINE_STRING": r'"""[\s\S]*?"""|\'\'\'[\s\S]*?\'\'\'',
-            "STRING": r'\"(?:\\.|[^"\\])*\"|\'(?:\\.|[^\'\\])*\'',
+            "STRING": r"\"(?:\\.|[^\"\\])*\"|\'(?:\\.|[^\'\\])*\'",
             # Special tokens
             "EXCLAIM": r"!",
             "NULL_COALESCING": r"\?\?",
             "QUESTION_MARK": r"\?",
+            # End of file
+            "EOF": r"\Z",
+            # Invalid
+            "INVALID": r".*",
         }
 
         # Combine all patterns into a single regular expression
@@ -136,7 +140,6 @@ class Lexer:
         pattern_strings = [
             f"(?P<{name}>{pattern})" for name, pattern in self.patterns.items()
         ]
-        pattern_strings.append(r"(?P<INVALID>.)")
         # Join all patterns with the OR operator '|'
         self.token_regex = re.compile("|".join(pattern_strings))
 
