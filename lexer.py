@@ -36,6 +36,7 @@ class Lexer:
             # Numbers
             "FLOAT": r"(?<!\w)(\d+(_?\d+)*)?\.\d+(_?\d+)*([eE][+-]?\d+(_?\d+)*)?\b",
             "INTEGER": r"\b\d+(_?\d+)*\b",
+            # Keywords
             "TYPE_INT": r"\b:int\b",
             "TYPE_CHAR": r"\b:char\b",
             "TYPE_FLOAT": r"\b:float\b",
@@ -61,7 +62,6 @@ class Lexer:
             "FINALLY": r"\bfinally\b",
             "RAISE": r"\braise\b",
             "WITH": r"\bwith\b",
-            "STDOUT": r"\bprint\b",
             "BREAK": r"\bbreak\b",
             "CONTINUE": r"\bcontinue\b",
             "NOTIN": r"\bnot in\b",
@@ -76,7 +76,7 @@ class Lexer:
             "NOT": r"\bnot\b",
             "AND": r"\band\b",
             "OR": r"\bor\b",
-            # Identifiers and keywords
+            # Identifiers
             "IDENTIFIER": r"\b[a-zA-Z_][a-zA-Z0-9_]*\b",
             "ARROW": r"->",
             "LAMBDA_ARROW": r"=>",
