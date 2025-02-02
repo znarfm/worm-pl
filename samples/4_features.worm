@@ -1,27 +1,17 @@
-# Variables
-name:str = "Alice";  # Basic assignment
-age:int = 2_8;  # Underscore in number
-price:float = 3.140_403; # Works on float as well
-is_admin:bool = True;
-empty = None;
+# Type annotations and number separators
+max_attempts:int = 1_000_000;
+success_rate:float = 99.999_999;
+database_url:str = "https://example.com";
+is_active:bool = True;
 
-def factorial(n:int) -> int {
-    return 1 if n == 0 else n * factorial(n-1);
-}
+# Lambda function with error handling
+safe_divide = (x:float, y:float) => !(x / y -> ZeroDivisionError: None);
 
-x = (5 + 3) * 2 // 4 ** 1;
-
-lambda = (x, y) => x ** y;
-
-x % 2 == 0 ? "Even" : "Odd";
-
-# Error handling example with a list
-get_item = (lst, index) => !(lst[index] -> IndexError: None);
-
-default_user = {
-    name: "Guest",
-    role: "Viewer"
+# Combine null safety, coalescing, and error handling
+connection = !(get_connection(database_url) -> ConnectionError: None) ?? {
+    status: "offline",
+    retries: 0
 };
-current_user = user ?? default_user;
-welcome_message = current_user?name ? "Welcome, " + current_user.name : "Welcome!";
-print(welcome_message);
+
+# Safe navigation with multiple levels
+settings = connection?.config?.timeout ?? 30;
