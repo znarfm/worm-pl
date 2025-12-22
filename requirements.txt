@@ -16,8 +16,6 @@ charset-normalizer==3.4.1
     # via requests
 click==8.1.8
     # via streamlit
-colorama==0.4.6
-    # via click
 gitdb==4.0.12
     # via gitpython
 gitpython==3.1.44
@@ -94,9 +92,7 @@ toml==0.10.2
 tornado==6.4.2
     # via streamlit
 typing-extensions==4.12.2
-    # via
-    #   altair
-    #   streamlit
+    # via streamlit
 tzdata==2024.2
     # via pandas
 urllib3==2.3.0
